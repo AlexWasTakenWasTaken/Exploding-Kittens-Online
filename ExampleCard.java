@@ -22,14 +22,14 @@ public class ExampleCard extends Card{
   }
 //------------------------------------------------------------------------------ 
   @Override
-  public void draw(Graphics g){
+  public void draw(Graphics g, int x, int y){
     g.setColor(Color.blue);
-    g.fillRect(this.getX(), this.getY(), Const.CARD_WIDTH, Const.CARD_HEIGHT);
+    g.fillRect(x, y, Const.CARD_WIDTH, Const.CARD_HEIGHT);
     g.setColor(Color.green);
     int largeSize = 24;
     Font largeFont = new Font("Arial", Font.BOLD, largeSize);
     g.setFont(largeFont); 
-    g.drawString(this.getName(), this.getX(), this.getY());
+    g.drawString(this.getName(), x, y);
   }
   @Override
   public void play(){
