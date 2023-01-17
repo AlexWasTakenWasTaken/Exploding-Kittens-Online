@@ -14,10 +14,11 @@ class Server {
   PrintWriter output;
   BufferedReader input;
   int clientCounter = 0;
-  Card card1 = new ExampleCard("one",1);
-  Card card2 = new ExampleCard("two",2);
-  Card card3 = new ExampleCard("three",3);
+  Card card1 = new ExampleCard("cardone","1");
+  Card card2 = new ExampleCard("cardtwo","2");
+  Card card3 = new ExampleCard("cardthree","3");
   ArrayList<Card> deck;
+  Game game = new Game();
   public static void main(String[] args) throws Exception{ 
     Server server = new Server();
     server.go();
@@ -49,6 +50,7 @@ class Server {
     public ConnectionHandler(Socket socket) { 
       this.socket = socket;
     }
+    @Override
     public void run() {
       try {
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -57,7 +59,7 @@ class Server {
         String msg = input.readLine();
         System.out.println("Message from the client: " + msg);
         //send a response to the client
-        output.println(clientCounter+deck.get(0).toString());
+        output.println(clientCounter+";"+deck.get(clientCounter-1).toString());
         output.flush();         
         //after completing the communication close the streams but do not close the socket!
         input.close();
