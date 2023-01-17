@@ -6,13 +6,12 @@
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.Font;
-import java.util.ArrayList;
 public class ExampleCard extends Card{
   private int num;
 //------------------------------------------------------------------------------
-  public ExampleCard(String name, int num){
+  public ExampleCard(String name, String num){
     super(name);
-    this.num = num;
+    this.num = Integer.parseInt(num);
   }
 //------------------------------------------------------------------------------    
   public int getNum(){
@@ -25,12 +24,12 @@ public class ExampleCard extends Card{
   @Override
   public void draw(Graphics g){
     g.setColor(Color.blue);
-    g.fillRect(0, 0, 800, 250);
+    g.fillRect(this.getX(), this.getY(), Const.CARD_WIDTH, Const.CARD_HEIGHT);
     g.setColor(Color.green);
     int largeSize = 24;
-    Font largeFont = new Font("Arial", Font.PLAIN, largeSize);
+    Font largeFont = new Font("Arial", Font.BOLD, largeSize);
     g.setFont(largeFont); 
-    g.drawString(this.getName(), 0, 0);
+    g.drawString(this.getName(), this.getX(), this.getY());
   }
   @Override
   public void play(){
