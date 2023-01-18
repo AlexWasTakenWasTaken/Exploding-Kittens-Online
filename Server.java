@@ -39,7 +39,7 @@ class Server {
     Socket socket;
     PrintWriter output;
     BufferedReader input;
-    Player player;
+    String name;
     public ConnectionHandler(Socket socket) { 
       this.socket = socket;
     }
@@ -49,8 +49,7 @@ class Server {
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream());
         //receive a message from the client
-        String name = input.readLine();
-        player = new Player(name, ""+clientCounter);
+        name = input.readLine();
         //send a response to the client
         output.println(clientCounter);
         output.flush();
