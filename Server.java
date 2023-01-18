@@ -14,30 +14,23 @@ class Server {
   PrintWriter output;
   BufferedReader input;
   int clientCounter = 0;
-  Card card1 = new ExampleCard("cardone","1");
-  Card card2 = new ExampleCard("cardtwo","2");
-  Card card3 = new ExampleCard("cardthree","3");
-  ArrayList<Card> deck;
   Game game = new Game();
+  ArrayList<Thread> clients = new ArrayList<Thread>();
   public static void main(String[] args) throws Exception{ 
     Server server = new Server();
     server.go();
   }
   
-  public void go() throws Exception{ 
-    deck = new ArrayList<Card>();
-    deck.add(card1);
-    deck.add(card2);
-    deck.add(card3);
-    //create a socket with the local IP address and wait for connection request       
-    System.out.println("Waiting for a connection request from a client ...");
-    serverSocket = new ServerSocket(PORT);                //create and bind a socket
+  public void go() throws Exception{     
+    serverSocket = new ServerSocket(PORT);
     while(true) {
-      clientSocket = serverSocket.accept();             //wait for connection request
+      System.out.println("Waiting for a connection request from a client ...");
+      clientSocket = serverSocket.accept();
       clientCounter = clientCounter +1;
       System.out.println("Client "+clientCounter+" connected");
       Thread connectionThread = new Thread(new ConnectionHandler(clientSocket));
-      connectionThread.start();                         //start a new thread to handle the connection
+      connectionThread.start();
+      clients.add(connectionThread);
     }
   }
   
@@ -46,7 +39,7 @@ class Server {
     Socket socket;
     PrintWriter output;
     BufferedReader input;
-    
+    Player player;
     public ConnectionHandler(Socket socket) { 
       this.socket = socket;
     }
@@ -56,12 +49,24 @@ class Server {
         input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         output = new PrintWriter(socket.getOutputStream());
         //receive a message from the client
-        String msg = input.readLine();
-        System.out.println("Message from the client: " + msg);
+        String name = input.readLine();
+        player = new Player(name, ""+clientCounter);
         //send a response to the client
-        output.println(clientCounter+";"+deck.get(clientCounter-1).toString());
-        output.flush();         
-        //after completing the communication close the streams but do not close the socket!
+        output.println(clientCounter);
+        output.flush();
+
+        Card attackCard = new AttackCard("Attack","AttackCard.png");
+        Card bombCard = new BombCard("Exploding Kitten","BombCard.png");
+        Card catCard = new CatCard("Tacocat","CatCard.png");
+        Card defuseCard = new DefuseCard("Defuse","DefuseCard.png");
+        Card favourCard = new FavourCard("Favor","FavourCard.png");
+        Card futureCard = new FutureCard("See The Future","FutureCard.png");
+        Card nopeCard = new NopeCard("Nope","NopeCard.png");
+        Card shuffleCard = new ShuffleCard("Shuffle","ShuffleCard.png");
+        Card skipCard = new SkipCard("Skip","SkipCard.png");
+        output.println(attackCard.toString()+";"+bombCard.toString()+";"+catCard.toString()+";"+defuseCard.toString()+";"+favourCard.toString()+";"+futureCard.toString()+";"+nopeCard.toString()+";"+shuffleCard.toString()+";"+skipCard.toString());
+        output.flush();
+
         input.close();
         output.close();
       }catch (IOException e) {e.printStackTrace();}
