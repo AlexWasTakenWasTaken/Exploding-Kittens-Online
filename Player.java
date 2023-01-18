@@ -5,90 +5,62 @@
  */
 
 import java.util.ArrayList;
-import java.net.Socket;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
 class Player {
-  final String LOCAL_HOST = "127.0.0.1";
-  final int PORT = 5001;
-  
-  JFrame frame;
-  GraphicsPanel canvas;
-  
-  Socket clientSocket;
-  PrintWriter output;    
-  BufferedReader input;
-  
-  ArrayList<Card> hand = new ArrayList<Card>();
-  Game game = new Game();
-  String username;
-  int playerNumber;
-  
-  public static void main (String[] args) throws Exception{ 
-    Player client = new Player();
-    client.start();
-  }
-  
-  public void start() throws Exception{ 
-    // setting up jframe
-    frame = new JFrame("Name of the game here?");     
-    frame.setSize(Const.WIDTH,Const.HEIGHT); // width, height
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // i should change this later maybe
-    canvas = new GraphicsPanel();
-    frame.add(canvas);
-    frame.setVisible(true);
-    
-    BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
-    username = keyboard.readLine();
-    keyboard.close();
-    
-    //create a socket with the local IP address and attempt a connection
-    System.out.println("Attempting to establish a connection ...");
-    clientSocket = new Socket(LOCAL_HOST, PORT);          //create and bind a socket, and request connection
-    output = new PrintWriter(clientSocket.getOutputStream());
-    input = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-    System.out.println("Connection to server established!");
-    
-    output.println(username);           //send a message to the server
-    output.flush();                                       //ensure the message was sent but not kept in the buffer
-    String msg = input.readLine();                        //get a response from the server
-    System.out.println("Message from server: '" + msg+"'");   
-    String[] splitMsg = msg.split(";");
-    playerNumber = Integer.parseInt(splitMsg[0]);
-    Card myCard = new ExampleCard(splitMsg[1],splitMsg[2]);
-    hand.add(myCard);
-    run();
-  }
-  public void run() throws Exception{
-    boolean running = true;
-    while(running){
-      canvas.repaint();
-    }
-    stop();
-  }
-  public void stop() throws Exception{ 
-    input.close();
-    output.close();
-    clientSocket.close();
-  }
-//------------------------------------------------------------------------------
-  /**
-   * A JPanel that contains all the graphics code
-   */
-  public class GraphicsPanel extends JPanel {
-    @Override
-    public void paintComponent(Graphics g) { 
-      super.paintComponent(g);
-      game.draw(g);
-      for(Card card:hand){
-        card.draw(g);
-      } 
-    }
-  }
-//------------------------------------------------------------------------------     
-}
 
+  private ArrayList<Card> hand;
+  private String name;
+  private int playerNumber;
+  
+  Player(String name, String playerNumber){
+    this.name = name;
+    this.playerNumber = Integer.parseInt(playerNumber);
+    this.hand = new ArrayList<Card>();
+  }
+  public void addToHand(String card){
+    String[] cardDetails = card.split(";");
+    if(cardDetails[2].equals("Attack card")){
+      Card myCard = new AttackCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Bomb card")){
+      Card myCard = new BombCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Cat card")){
+      Card myCard = new CatCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Defuse card")){
+      Card myCard = new DefuseCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Favour card")){
+      Card myCard = new FavourCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Future card")){
+      Card myCard = new FutureCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Nope card")){
+      Card myCard = new NopeCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Shuffle card")){
+      Card myCard = new ShuffleCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+    if(cardDetails[2].equals("Skip card")){
+      Card myCard = new SkipCard(cardDetails[0],cardDetails[1]);
+      hand.add(myCard);
+    }
+  }
+  public void draw(Graphics g){
+    for(int i=0; i<this.hand.size(); i++){
+      this.hand.get(i).draw(g, 10,i);
+    } 
+  }  
+}
